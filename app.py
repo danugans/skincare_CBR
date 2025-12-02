@@ -8,7 +8,7 @@ create_sample_if_missing()
 
 st.set_page_config(page_title="Skincare CBR", layout="centered")
 
-st.title("Sistem Rekomendasi Skincare (Case-Based Reasoning)")
+st.title("Sistem Rekomendasi Treatment (Case-Based Reasoning)")
 st.markdown("Masukkan profil kulit & gejala, lalu sistem akan mencari kasus serupa dan merekomendasikan solusi.")
 
 # Sidebar input
@@ -65,3 +65,4 @@ if st.sidebar.checkbox("Tampilkan semua kasus"):
     df_all = load_cases("cases.csv")
     st.subheader("Semua kasus di database")
     st.dataframe(df_all)
+
