@@ -55,29 +55,27 @@ def retrieve(new_case, df_cases, k=3):
     return res_df.sort_values("sim_total", ascending=False).head(k)
 
 def retain_case(new_case, path="cases.csv"):
-    import pandas as pd
-
+    # Load CSV aman
     try:
         df = pd.read_csv(path)
     except Exception:
-        # Kalau file rusak atau tidak bisa dibaca → buat baru
         df = pd.DataFrame(columns=[
             "id","age","gender","skin_type","acne","blackheads",
             "dryness","redness","dark_spots","aging","solution","notes"
         ])
 
-    # Pastikan kolom ID ada
+    # Tentukan ID baru
     if "id" not in df.columns or df.empty:
         new_id = 1
     else:
         try:
             new_id = int(df["id"].max()) + 1
-        except Exception:
+        except:
             new_id = 1
 
     new_case["id"] = new_id
 
-    # Tambahkan data baru
+    # Tambahkan baris menggunakan concat (append sudah dihapus!)
     new_row = pd.DataFrame([new_case])
     df = pd.concat([df, new_row], ignore_index=True)
 
@@ -85,6 +83,8 @@ def retain_case(new_case, path="cases.csv"):
     df.to_csv(path, index=False)
 
     return new_id
+
+
 
 
 
