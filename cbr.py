@@ -4,7 +4,7 @@ import numpy as np
 
 SYMPTOM_COLS = ["acne","blackheads","dryness","redness","dark_spots","aging"]
 
-def load_cases(path="data/cases.csv"):
+def load_cases(path="cases.csv"):
     df = pd.read_csv(path)
     for c in SYMPTOM_COLS:
         if c in df.columns:
@@ -54,10 +54,11 @@ def retrieve(new_case, df_cases, k=3):
     res_df = pd.DataFrame(results)
     return res_df.sort_values("sim_total", ascending=False).head(k)
 
-def retain_case(new_case, path="data/cases.csv"):
+def retain_case(new_case, path="cases.csv"):
     df = load_cases(path)
     new_case["id"] = int(df["id"].max()) + 1 if len(df) > 0 else 1
     new_row = pd.DataFrame([new_case])
     df = pd.concat([df, new_row], ignore_index=True)
     df.to_csv(path, index=False)
     return new_case["id"]
+
