@@ -5,7 +5,7 @@ from cbr import load_cases, retrieve, retain_case
 from utils import create_sample_if_missing
 
 # Pastikan dataset tersedia
-create_sample_if_missing("data/cases.csv")
+create_sample_if_missing("cases.csv")
 
 st.set_page_config(page_title="CBR Treatment Kulit Wajah", layout="centered")
 
@@ -50,7 +50,7 @@ if proceed:
         "aging": int(aging)
     }
 
-    df = load_cases("data/cases.csv")
+    df = load_cases("cases.csv")
     topk = retrieve(new_case, df, k=3)
 
     st.subheader("🔍 Kasus yang Paling Mirip (Retrieve)")
@@ -102,7 +102,7 @@ if proceed:
         else:
             save_case["notes"] = f"User rejected solution from case {int(best['id'])} and added custom solution"
 
-        new_id = retain_case(save_case, path="data/cases.csv")
+        new_id = retain_case(save_case, path="cases.csv")
 
         st.success(f"Kasus baru berhasil disimpan dengan ID {new_id}.")
         st.balloons()
@@ -113,6 +113,6 @@ if proceed:
 
 st.sidebar.header("Admin")
 if st.sidebar.checkbox("Tampilkan semua kasus"):
-    df_all = load_cases("data/cases.csv")
+    df_all = load_cases("cases.csv")
     st.subheader("📄 Semua Kasus di Dataset")
     st.dataframe(df_all)
