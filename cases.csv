@@ -1,8 +1,8 @@
 id,age,gender,skin_type,acne,blackheads,dryness,redness,dark_spots,aging,solution,notes
-1,22,female,oily,1,1,0,0,0,0,"Gentle foaming cleanser + salicylic acid 2% gel at night + oil-free moisturizer","Sebelumnya pakai skincare berat"
-2,30,male,combination,0,1,1,0,0,0,"Use gentle exfoliation 1x week + hydrating serum (hyaluronic) + sunscreen","Blackheads di hidung"
-3,45,female,dry,0,0,1,1,1,1,"Hydrating cream (ceramide) + vitamin C serum untuk dark spots + sunscreen","Penuaan & hiperpigmentasi"
-4,18,female,oily,1,0,0,0,0,0,"Benzoyl peroxide spot treatment + non comedogenic moisturizer","Acne jiwa hormonal"
-5,28,male,sensitive,0,0,1,1,0,0,"Fragrance-free moisturizer + niacinamide 2% + consult dermatologist for redness","Kulit sensitif, mudah kemerahan"
-6,35,female,combination,1,0,0,0,0,1,"Retinol 0.25% night, moisturizer, sunscreen daytime","Acne dan garis halus"
-7,24,female,normal,0,0,0,0,0,0,"Basic: gentle cleanser + moisturizer + sunscreen","Kulit normal"
+1,22,female,oily,1,1,0,0,0,0,Gentle foaming cleanser + salicylic acid 2% gel at night + oil-free moisturizer,Sebelumnya pakai skincare berat
+2,30,male,combination,0,1,1,0,0,0,Use gentle exfoliation 1x week + hydrating serum (hyaluronic) + sunscreen,Blackheads di hidung
+3,45,female,dry,0,0,1,1,1,1,Hydrating cream (ceramide) + vitamin C serum untuk dark spots + sunscreen,Penuaan & hiperpigmentasi
+4,18,female,oily,1,0,0,0,0,0,Benzoyl peroxide spot treatment + non comedogenic moisturizer,Acne jiwa hormonal
+5,28,male,sensitive,0,0,1,1,0,0,Fragrance-free moisturizer + niacinamide 2% + consult dermatologist for redness,Kulit sensitif mudah kemerahan
+6,35,female,combination,1,0,0,0,0,1,Retinol 0.25% night moisturizer sunscreen daytime,Acne dan garis halus
+7,24,female,normal,0,0,0,0,0,0,Basic gentle cleanser moisturizer sunscreen,Kulit normal
