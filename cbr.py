@@ -55,6 +55,7 @@ def retrieve(new_case, df_cases, k=3):
     return res_df.sort_values("sim_total", ascending=False).head(k)
 
 def retain_case(new_case, path="cases.csv"):
+    import pandas as pd
     # Load CSV aman
     try:
         df = pd.read_csv(path)
@@ -83,6 +84,7 @@ def retain_case(new_case, path="cases.csv"):
     df.to_csv(path, index=False)
 
     return new_id
+
 
 
 
