@@ -45,19 +45,40 @@ if st.sidebar.button("Cari Rekomendasi"):
         st.write(f"- Solution: {row['solution']}")
         st.write(f"- Notes: {row['notes']}")
         st.write("---")
-    # Show best solution by highest sim
-    best = topk.iloc[0]
-    st.subheader("Rekomendasi otomatis (Reuse)")
-    st.info(best['solution'])
-    st.markdown("Kamu dapat mengedit rekomendasi sebelum menyimpan.")
-    new_solution = st.text_area("Edit rekomendasi solusi (opsional)", value=best['solution'])
-    if st.button("Simpan kasus (Retain)"):
-        save_case = new_case.copy()
-        save_case["solution"] = new_solution
-        save_case["notes"] = f"Generated from CBR (based on case {int(best['id'])})"
-        new_id = retain_case(save_case, path="cases.csv")
-        st.success(f"Kasus baru tersimpan dengan id {new_id}.")
-        st.balloons()
+        
+# Show best solution by highest similarity
+best = topk.iloc[0]
+st.subheader("Rekomendasi Awal (Reuse)")
+st.info(best['solution'])
+
+st.write("Apakah rekomendasi ini sesuai untuk kondisi Anda?")
+choice = st.radio(
+    "Pilih salah satu:",
+    ("Terima rekomendasi", "Tolak dan gunakan rekomendasi sendiri")
+)
+
+if choice == "Tolak dan gunakan rekomendasi sendiri":
+    new_solution = st.text_area(
+        "Masukkan rekomendasi treatment wajah versi Anda:",
+        placeholder="Contoh: Gunakan moisturizer tanpa fragrance + serum niacinamide..."
+    )
+else:
+    new_solution = best['solution']  # langsung pakai solusi dari kasus mirip
+
+if st.button("Simpan Ke Dataset (Retain)"):
+    save_case = new_case.copy()
+    save_case["solution"] = new_solution
+
+    if choice == "Terima rekomendasi":
+        save_case["notes"] = f"User accepted solution from case {int(best['id'])}"
+    else:
+        save_case["notes"] = f"User rejected solution from case {int(best['id'])} and provided custom solution"
+
+    new_id = retain_case(save_case, path="data/cases.csv")
+
+    st.success(f"Kasus baru berhasil disimpan dengan ID {new_id}.")
+    st.balloons()
+
 
 # Admin / lihat dataset
 st.sidebar.header("Admin")
@@ -65,5 +86,6 @@ if st.sidebar.checkbox("Tampilkan semua kasus"):
     df_all = load_cases("cases.csv")
     st.subheader("Semua kasus di database")
     st.dataframe(df_all)
+
 
 
