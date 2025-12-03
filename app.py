@@ -1,67 +1,66 @@
+# app.py
 import streamlit as st
 import pandas as pd
-from cbr import retrieve_cases, retain_case
+from cbr import load_cases, retrieve, retain_case
+from utils import create_sample_if_missing
 
-st.title("🔍 CBR Skincare Recommendation System")
+create_sample_if_missing()
 
-# -----------------------------
-# Input Pengguna
-# -----------------------------
-st.header("Masukkan Kondisi Kulit Anda")
+st.set_page_config(page_title="Skincare CBR", layout="centered")
 
-skin = st.text_input("Jenis kulit (contoh: oily, dry, combination)")
-age = st.number_input("Usia", min_value=10, max_value=80, step=1)
-symptoms = st.text_input("Keluhan (jerawat, kusam, bruntusan)")
+st.title("Sistem Rekomendasi Skincare (Case-Based Reasoning)")
+st.markdown("Masukkan profil kulit & gejala, lalu sistem akan mencari kasus serupa dan merekomendasikan solusi.")
 
-if st.button("Cari Rekomendasi"):
-    if skin == "" or symptoms == "":
-        st.warning("Mohon masukkan semua data.")
-        st.stop()
+# Sidebar input
+st.sidebar.header("Masukkan profil")
+age = st.sidebar.number_input("Umur", min_value=8, max_value=100, value=25)
+gender = st.sidebar.selectbox("Gender", ["female","male","other"])
+skin_type = st.sidebar.selectbox("Tipe kulit", ["oily","dry","combination","sensitive","normal"])
+st.sidebar.markdown("**Gejala / masalah** (centang jika ada)")
+acne = st.sidebar.checkbox("Acne / Jerawat")
+blackheads = st.sidebar.checkbox("Blackheads / Komedo")
+dryness = st.sidebar.checkbox("Kekeringan")
+redness = st.sidebar.checkbox("Kemerahan")
+dark_spots = st.sidebar.checkbox("Noda / Dark spots")
+aging = st.sidebar.checkbox("Tanda penuaan (garis halus)")
 
-    user_input = {
-        "skin_type": skin,
+if st.sidebar.button("Cari Rekomendasi"):
+    new_case = {
         "age": age,
-        "symptoms": symptoms
+        "gender": gender,
+        "skin_type": skin_type,
+        "acne": int(acne),
+        "blackheads": int(blackheads),
+        "dryness": int(dryness),
+        "redness": int(redness),
+        "dark_spots": int(dark_spots),
+        "aging": int(aging)
     }
-
-    results = retrieve_cases(user_input, "cases.csv")
-
-    st.subheader("3 Kasus Paling Mirip")
-    top3 = results.head(3)
-
-    for i, row in top3.iterrows():
+    df = load_cases("cases.csv")
+    topk = retrieve(new_case, df, k=3)
+    st.subheader("Kasus yang paling mirip")
+    for idx, row in topk.iterrows():
+        st.markdown(f"**Case ID:** {int(row['id'])} — similarity: **{row['sim_total']:.3f}**")
+        st.write(f"- Age: {row['age']}, Gender: {row['gender']}, Skin: {row['skin_type']}")
+        st.write(f"- Solution: {row['solution']}")
+        st.write(f"- Notes: {row['notes']}")
         st.write("---")
-        st.write(f"**Case ID:** {row['case_id']}")
-        st.write(f"Similarity: **{row['similarity']}**")
-        st.write(f"Skin: {row['skin_type']}")
-        st.write(f"Age: {row['age']}")
-        st.write(f"Symptoms: {row['symptoms']}")
-        st.write(f"Solution: **{row['solution']}**")
+    # Show best solution by highest sim
+    best = topk.iloc[0]
+    st.subheader("Rekomendasi otomatis (Reuse)")
+    st.info(best['solution'])
+    st.markdown("Kamu dapat mengedit rekomendasi sebelum menyimpan.")
+    new_solution = st.text_area("Edit rekomendasi solusi (opsional)", value=best['solution'])
+    if st.button("Simpan kasus (Retain)"):
+        save_case = new_case.copy()
+        save_case["solution"] = new_solution
+        save_case["notes"] = f"Generated from CBR (based on case {int(best['id'])})"
+        new_id = retain_case(save_case, path="cases.csv")
+        st.success(f"Kasus baru tersimpan dengan id {new_id}.")
+        st.balloons()
 
-        # -----------------------------
-        # Feedback user (Revise)
-        # -----------------------------
-        feedback = st.radio(
-            f"Apakah solusi dari Case {row['case_id']} cocok?",
-            ["Ya", "Tidak"],
-            key=f"feedback_{i}"
-        )
 
-        if feedback == "Ya":
-            st.success(f"Solusi dari Case {row['case_id']} diterima.")
-        else:
-            st.warning("Masukkan solusi baru:")
-            new_solution = st.text_input("Solusi Baru", key=f"solution_{i}")
-
-            if st.button(f"Simpan revisi Case baru {i}"):
-                save_case = {
-                    "skin_type": skin,
-                    "age": age,
-                    "symptoms": symptoms,
-                    "solution": new_solution,
-                }
-
-                new_id = retain_case(save_case, "cases.csv")
-
-                st.success(f"Kasus baru berhasil disimpan dengan ID {new_id}.")
-                st.balloons()
+if st.sidebar.checkbox("Tampilkan semua kasus"):
+    df_all = load_cases("cases.csv")
+    st.subheader("Semua kasus di database")
+    st.dataframe(df_all)
